@@ -1,0 +1,80 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Resources;
+using System.Text;
+using System.Xml.Serialization;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Windows.Forms;
+
+namespace Keyboard
+{
+	[Serializable]
+	public class Keys
+	{
+		public Key LootKey;
+		public Key FindMobKey;
+		public Key RestKey;
+		public Key RotateKey;
+		public Key EscKey;
+		public Key TargetSelf;
+		public Key StartStop;
+		public Key AttackKey;
+		public Key ReturnToTownKey;
+
+		public Keys()
+		{
+			AttackKey = new Key(Messaging.VKeys.KEY_1, Messaging.ShiftType.NONE);
+			StartStop = new Key(Messaging.VKeys.KEY_ESCAPE, Messaging.ShiftType.ALT_CTRL);
+			EscKey = new Key(Messaging.VKeys.KEY_ESCAPE);
+			LootKey = new Key(Messaging.VKeys.KEY_PLUS);
+			FindMobKey = new Key(Messaging.VKeys.KEY_TAB);
+			RestKey = new Key(Messaging.VKeys.KEY_COMMA);
+			RotateKey = new Key(Messaging.VKeys.KEY_MBUTTON);
+			TargetSelf = new Key(Messaging.VKeys.KEY_F1);
+			ReturnToTownKey = new Key(Messaging.VKeys.KEY_PLUS, Messaging.ShiftType.ALT);
+		}
+
+		public static void Serialize(string path, Keys keys)
+		{
+			XmlSerializer serializer = new XmlSerializer(typeof(Keys));
+			FileStream xmlStream = new FileStream(path, FileMode.Create, FileAccess.Write);
+			serializer.Serialize(xmlStream, keys);
+			xmlStream.Close();
+		}
+
+		public static void Serialize(Stream stream, Keys keys)
+		{
+			XmlSerializer serializer = new XmlSerializer(typeof(Keys));
+			Stream xmlStream = stream;
+			serializer.Serialize(xmlStream, keys);
+			xmlStream.Close();
+		}
+
+		public static Keys Deserialize(string path)
+		{
+			try
+			{
+				Keys keys = new Keys();
+				XmlSerializer serializer = new XmlSerializer(typeof(Keys));
+				FileStream xmlStream = new FileStream(path, FileMode.Open, FileAccess.Read);
+				keys = serializer.Deserialize(xmlStream) as Keys;
+				xmlStream.Close();
+				return keys;
+			}
+			catch
+			{
+				return new Keys();
+			}
+		}
+
+		public static Keys Deserialize(Stream stream)
+		{
+			Keys keys = new Keys();
+			XmlSerializer serializer = new XmlSerializer(typeof(Keys));
+			keys = serializer.Deserialize(stream) as Keys;
+			stream.Close();
+			return keys;
+		}
+	}
+}

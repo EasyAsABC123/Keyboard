@@ -5,12 +5,10 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace Keyboard
-{
+namespace Keyboard {
 	/// <summary>Class for messaging and key presses</summary>
 	[Serializable]
-	public class Messaging
-	{
+	public class Messaging {
 		#region Unmanaged Items
 		#region Constants
 		/// <summary>Maps a virtual key to a key code.</summary>
@@ -23,7 +21,7 @@ namespace Keyboard
 		const uint MAPVK_VSC_TO_VK_EX = 0x03;
 		/// <summary>Maps a virtual key to a key code with specified keyboard.</summary>
 		const uint MAPVK_VK_TO_VSC_EX = 0x04;
-		
+
 		/// <summary>Code if the key is toggled.</summary>
 		const ushort KEY_TOGGLED = 0x1;
 		/// <summary>Code for if the key is pressed.</summary>
@@ -44,8 +42,8 @@ namespace Keyboard
 		private const int INPUT_HARDWARE = 2;
 		#endregion Constants
 
-        [DllImport("user32.dll", SetLastError = false)]
-        static extern IntPtr GetMessageExtraInfo();
+		[DllImport("user32.dll", SetLastError = false)]
+		static extern IntPtr GetMessageExtraInfo();
 
 		/// <summary>Gets the key state of the specified key.</summary>
 		/// <param name="nVirtKey">The key to check.</param>
@@ -66,7 +64,7 @@ namespace Keyboard
 		/// <returns>A message.</returns>
 		[DllImport("user32.dll", SetLastError = true)]
 		private static extern uint SendInput(uint nInputs, ref INPUT pInputs, int cbSize);
-		
+
 		/// <summary>
 		/// The GetForegroundWindow function returns a handle to the foreground window.
 		/// </summary>
@@ -81,8 +79,8 @@ namespace Keyboard
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
 		private static extern bool SendMessage(IntPtr hWnd, int wMsg, uint wParam, uint lParam);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
+		[DllImport("user32.dll", CharSet = CharSet.Auto)]
+		static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
 
 		[return: MarshalAs(UnmanagedType.Bool)]
 		[DllImport("user32.dll", SetLastError = true)]
@@ -94,8 +92,7 @@ namespace Keyboard
 
 		#region Structures
 		#region Public
-		public enum WindowsMessages : int
-		{
+		public enum WindowsMessages : int {
 			WM_NULL = 0x00,
 			WM_CREATE = 0x01,
 			WM_DESTROY = 0x02,
@@ -186,7 +183,7 @@ namespace Keyboard
 			WM_NCMBUTTONUP = 0xA8,
 			WM_NCMBUTTONDBLCLK = 0xA9,
 
-			WM_INPUT = 0x00FF, 
+			WM_INPUT = 0x00FF,
 
 			WM_KEYFIRST = 0x100,
 			WM_KEYDOWN = 0x100,
@@ -323,8 +320,7 @@ namespace Keyboard
 			WM_APP = 0x8000
 		}
 
-		public struct KEYBDINPUT
-		{
+		public struct KEYBDINPUT {
 			public ushort wVk;
 			public ushort wScan;
 			public uint dwFlags;
@@ -333,8 +329,7 @@ namespace Keyboard
 		};
 
 		[StructLayout(LayoutKind.Explicit, Size = 28)]
-		public struct INPUT
-		{
+		public struct INPUT {
 			[FieldOffset(0)]
 			public uint type;
 			[FieldOffset(4)]
@@ -342,21 +337,19 @@ namespace Keyboard
 		};
 
 		[Serializable]
-		public enum ShiftType : int
-		{
+		public enum ShiftType : int {
 			NONE = 0x0,
 			ALT = 0x1,
 			CTRL = 0x2,
-			ALT_CTRL = 0x3,			
+			ALT_CTRL = 0x3,
 			SHIFT = 0x4,
 			ALT_SHIFT = 0x5,
 			CTRL_SHIFT = 0x6,
 			ALT_CTRL_SHIFT = 0x7
 		}
 
-		public enum Message : int
-		{
-            NCHITTEST = (0x0084),
+		public enum Message : int {
+			NCHITTEST = (0x0084),
 			KEY_DOWN = (0x0100), //Key down
 			KEY_UP = (0x0101), //Key Up
 			VM_CHAR = (0x0102), //The character being pressed
@@ -369,15 +362,14 @@ namespace Keyboard
 			RBUTTONDOWN = (0x204), //Right mousebutton down 
 			RBUTTONUP = (0x205),   //Right mousebutton up 
 			RBUTTONDBLCLK = (0x206), //Right mousebutton doubleclick
-            /// <summary>Middle mouse button down</summary>
-            MBUTTONDOWN = (0x207),
-            /// <summary>Middle mouse button up</summary>
-            MBUTTONUP = (0x208)
+			/// <summary>Middle mouse button down</summary>
+			MBUTTONDOWN = (0x207),
+			/// <summary>Middle mouse button up</summary>
+			MBUTTONUP = (0x208)
 		}
 
 		[Serializable]
-		public enum VKeys : int
-		{
+		public enum VKeys : int {
 			KEY_0 = 0x30,   //0 key 
 			KEY_1 = 0x31,   //1 key 
 			KEY_2 = 0x32,   //2 key 
@@ -490,63 +482,54 @@ namespace Keyboard
 
 		#region Methods
 		#region Public
-		public static bool GetKeyState(Key key)
-		{
-			if ((GetKeyState((int)key.VK) & 0xF0) == 1)
+		public static bool GetKeyState(Key key) {
+			if((GetKeyState((int) key.VK) & 0xF0) == 1)
 				return true;
 
 			return false;
 		}
 
-        public static void BackgroundMousePosition(IntPtr hWnd, int x, int y)
-        {
-            PostMessage(hWnd, (int)WindowsMessages.WM_MOUSEMOVE, 0, GetLParam(x, y));
-        }
+		public static void BackgroundMousePosition(IntPtr hWnd, int x, int y) {
+			PostMessage(hWnd, (int) WindowsMessages.WM_MOUSEMOVE, 0, GetLParam(x, y));
+		}
 
-        public static void BackgroundMouseClick(IntPtr hWnd, Key key, int x , int y)
-        {
-            switch (key.VK)
-            {
-                case VKeys.KEY_MBUTTON:
-                    PostMessage(hWnd, (int)Message.MBUTTONDOWN, (uint)key.VK, GetLParam(x, y));
-                    Thread.Sleep(10);
-                    PostMessage(hWnd, (int)Message.MBUTTONUP, (uint)key.VK, GetLParam(x, y));
-                    break;
-                case VKeys.KEY_LBUTTON:
-                    PostMessage(hWnd, (int)Message.LBUTTONDOWN, (uint)key.VK, GetLParam(x, y));
-                    Thread.Sleep(10);
-                    PostMessage(hWnd, (int)Message.LBUTTONUP, (uint)key.VK, GetLParam(x, y));
-                    break;
-                case VKeys.KEY_RBUTTON:
-                    PostMessage(hWnd, (int)Message.RBUTTONDOWN, (uint)key.VK, GetLParam(x, y));
-                    Thread.Sleep(10);
-                    PostMessage(hWnd, (int)Message.RBUTTONUP, (uint)key.VK, GetLParam(x, y));
-                    break;
-            }
-        }
+		public static void BackgroundMouseClick(IntPtr hWnd, Key key, int x, int y) {
+			switch(key.VK) {
+				case VKeys.KEY_MBUTTON:
+					PostMessage(hWnd, (int) Message.MBUTTONDOWN, (uint) key.VK, GetLParam(x, y));
+					Thread.Sleep(10);
+					PostMessage(hWnd, (int) Message.MBUTTONUP, (uint) key.VK, GetLParam(x, y));
+					break;
+				case VKeys.KEY_LBUTTON:
+					PostMessage(hWnd, (int) Message.LBUTTONDOWN, (uint) key.VK, GetLParam(x, y));
+					Thread.Sleep(10);
+					PostMessage(hWnd, (int) Message.LBUTTONUP, (uint) key.VK, GetLParam(x, y));
+					break;
+				case VKeys.KEY_RBUTTON:
+					PostMessage(hWnd, (int) Message.RBUTTONDOWN, (uint) key.VK, GetLParam(x, y));
+					Thread.Sleep(10);
+					PostMessage(hWnd, (int) Message.RBUTTONUP, (uint) key.VK, GetLParam(x, y));
+					break;
+			}
+		}
 
-		public static void SendChatTextPost(IntPtr hWnd, string msg)
-		{
+		public static void SendChatTextPost(IntPtr hWnd, string msg) {
 			PostMessage(hWnd, new Key(VKeys.KEY_RETURN));
-			foreach (char c in msg)
-			{
+			foreach(char c in msg) {
 				PostMessage(hWnd, new Key(c));
 			}
 			PostMessage(hWnd, new Key(VKeys.KEY_RETURN));
 		}
 
-        public static void SendChatTextSend(IntPtr hWnd, string msg)
-        {
-            SendMessage(hWnd, new Key(VKeys.KEY_RETURN), true);
-            foreach (char c in msg)
-            {
-                SendChar(hWnd, c, true);
-            }
-            SendMessage(hWnd, new Key(VKeys.KEY_RETURN), true);
-        }
+		public static void SendChatTextSend(IntPtr hWnd, string msg) {
+			SendMessage(hWnd, new Key(VKeys.KEY_RETURN), true);
+			foreach(char c in msg) {
+				SendChar(hWnd, c, true);
+			}
+			SendMessage(hWnd, new Key(VKeys.KEY_RETURN), true);
+		}
 
-		public static bool ForegroundKeyPress(Key key)
-		{
+		public static bool ForegroundKeyPress(Key key) {
 			bool temp = true;
 
 			temp &= ForegroundKeyDown(key);
@@ -556,8 +539,7 @@ namespace Keyboard
 			return temp;
 		}
 
-		public static bool ForegroundKeyPress(IntPtr hWnd, Key key)
-		{
+		public static bool ForegroundKeyPress(IntPtr hWnd, Key key) {
 			bool temp = true;
 
 			temp &= ForegroundKeyDown(hWnd, key);
@@ -567,8 +549,7 @@ namespace Keyboard
 			return temp;
 		}
 
-		public static bool ForegroundKeyDown(Key key)
-		{
+		public static bool ForegroundKeyDown(Key key) {
 			uint intReturn;
 			INPUT structInput;
 			structInput = new INPUT();
@@ -579,17 +560,16 @@ namespace Keyboard
 			structInput.ki.time = 0;
 			structInput.ki.dwFlags = 0;
 			// Key down the actual key-code
-			structInput.ki.wVk = (ushort)key.VK;
+			structInput.ki.wVk = (ushort) key.VK;
 			intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
-			
+
 			// Key up shift, ctrl, and/or alt
 			//keybd_event((int)key.VK, GetScanCode(key.VK) + 0x80, KEYEVENTF_NONE, 0);
 			//keybd_event((int)key.VK, GetScanCode(key.VK) + 0x80, KEYEVENTF_KEYUP, 0);
 			return true;
 		}
 
-		public static bool ForegroundKeyUp(Key key)
-		{
+		public static bool ForegroundKeyUp(Key key) {
 			uint intReturn;
 			INPUT structInput;
 			structInput = new INPUT();
@@ -600,7 +580,7 @@ namespace Keyboard
 			structInput.ki.time = 0;
 			structInput.ki.dwFlags = 0;
 			// Key down the actual key-code
-			structInput.ki.wVk = (ushort)key.VK;
+			structInput.ki.wVk = (ushort) key.VK;
 
 			// Key up the actual key-code
 			structInput.ki.dwFlags = KEYEVENTF_KEYUP;
@@ -608,31 +588,25 @@ namespace Keyboard
 			return true;
 		}
 
-		public static bool ForegroundKeyDown(IntPtr hWnd, Key key)
-		{
-			if (GetForegroundWindow() != hWnd)
-			{
-				if (!SetForegroundWindow(hWnd))
+		public static bool ForegroundKeyDown(IntPtr hWnd, Key key) {
+			if(GetForegroundWindow() != hWnd) {
+				if(!SetForegroundWindow(hWnd))
 					return false;
 			}
 			return ForegroundKeyDown(key);
 		}
 
-		public static bool ForegroundKeyUp(IntPtr hWnd, Key key)
-		{
-			if (GetForegroundWindow() != hWnd)
-			{
-				if (!SetForegroundWindow(hWnd))
+		public static bool ForegroundKeyUp(IntPtr hWnd, Key key) {
+			if(GetForegroundWindow() != hWnd) {
+				if(!SetForegroundWindow(hWnd))
 					return false;
 			}
 			return ForegroundKeyUp(key);
 		}
 
-		public static bool ForegroundKeyPressAll(IntPtr hWnd, Key key, bool alt, bool ctrl, bool shift)
-		{
-			if (GetForegroundWindow() != hWnd)
-			{
-				if (!SetForegroundWindow(hWnd))
+		public static bool ForegroundKeyPressAll(IntPtr hWnd, Key key, bool alt, bool ctrl, bool shift) {
+			if(GetForegroundWindow() != hWnd) {
+				if(!SetForegroundWindow(hWnd))
 					return false;
 			}
 			uint intReturn;
@@ -644,76 +618,67 @@ namespace Keyboard
 			structInput.ki.wScan = 0;
 			structInput.ki.time = 0;
 			structInput.ki.dwFlags = 0;
-			if (alt)
-			{
-				structInput.ki.wVk = (ushort)VKeys.KEY_MENU;
+			if(alt) {
+				structInput.ki.wVk = (ushort) VKeys.KEY_MENU;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(100);
 			}
-			if (ctrl)
-			{
-				structInput.ki.wVk = (ushort)VKeys.KEY_CONTROL;
+			if(ctrl) {
+				structInput.ki.wVk = (ushort) VKeys.KEY_CONTROL;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(100);
 			}
-			if (shift)
-			{
-				structInput.ki.wVk = (ushort)VKeys.KEY_SHIFT;
+			if(shift) {
+				structInput.ki.wVk = (ushort) VKeys.KEY_SHIFT;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(100);
 
-				if (key.ShiftKey != VKeys.NULL)
-				{
-					structInput.ki.wVk = (ushort)key.ShiftKey;
+				if(key.ShiftKey != VKeys.NULL) {
+					structInput.ki.wVk = (ushort) key.ShiftKey;
 					intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
 					Thread.Sleep(100);
 				}
 			}
-		
+
 			// Key up the actual key-code			
 			ForegroundKeyPress(hWnd, key);
 
 			structInput.ki.dwFlags = KEYEVENTF_KEYUP;
-			if (shift && key.ShiftKey == VKeys.NULL)
-			{
-				structInput.ki.wVk = (ushort)VKeys.KEY_SHIFT;
+			if(shift && key.ShiftKey == VKeys.NULL) {
+				structInput.ki.wVk = (ushort) VKeys.KEY_SHIFT;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(100);
 			}
-			if (ctrl)
-			{
-				structInput.ki.wVk = (ushort)VKeys.KEY_CONTROL;
+			if(ctrl) {
+				structInput.ki.wVk = (ushort) VKeys.KEY_CONTROL;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(100);
 			}
-			if (alt)
-			{
-				structInput.ki.wVk = (ushort)VKeys.KEY_MENU;
+			if(alt) {
+				structInput.ki.wVk = (ushort) VKeys.KEY_MENU;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(100);
 			}
 			return true;
 		}
 
-		public static bool PostMessage(IntPtr hWnd, Key key)
-		{
+		public static bool PostMessage(IntPtr hWnd, Key key) {
 			//Send KEY_DOWN
-			if (PostMessage(hWnd, (int)Message.KEY_DOWN, (uint)key.VK, GetLParam(1, key.VK, 0, 0, 0, 0)))
+			if(PostMessage(hWnd, (int) Message.KEY_DOWN, (uint) key.VK, GetLParam(1, key.VK, 0, 0, 0, 0)))
 				return false;
 			Thread.Sleep(30);
-            //Send VM_CHAR
-            if (PostMessage(hWnd, (int)Message.VM_CHAR, (uint)key.VK, GetLParam(1, key.VK, 0, 0, 0, 0)))
-                return false;
-            Thread.Sleep(30);
-			if (PostMessage(hWnd, (int)Message.KEY_UP, (uint)key.VK, GetLParam(1, key.VK, 0, 0, 0, 0)))
+			//Send VM_CHAR
+			if(PostMessage(hWnd, (int) Message.VM_CHAR, (uint) key.VK, GetLParam(1, key.VK, 0, 0, 0, 0)))
+				return false;
+			Thread.Sleep(30);
+			if(PostMessage(hWnd, (int) Message.KEY_UP, (uint) key.VK, GetLParam(1, key.VK, 0, 0, 0, 0)))
 				return false;
 			Thread.Sleep(30);
 
 			return true;
 		}
 
-		public static bool PostMessageAll(IntPtr hWnd, Key key, bool alt, bool ctrl, bool shift)
-		{
+		public static bool PostMessageAll(IntPtr hWnd, Key key, bool alt, bool ctrl, bool shift) {
 			CheckKeyShiftState();
 			uint intReturn;
 			INPUT structInput;
@@ -724,28 +689,24 @@ namespace Keyboard
 			structInput.ki.wScan = 0;
 			structInput.ki.time = 0;
 			structInput.ki.dwFlags = 0;
-			if (alt)
-			{
-				structInput.ki.wVk = (ushort)VKeys.KEY_MENU;
+			if(alt) {
+				structInput.ki.wVk = (ushort) VKeys.KEY_MENU;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(100);
 			}
-			if (ctrl)
-			{
-				structInput.ki.wVk = (ushort)VKeys.KEY_CONTROL;
+			if(ctrl) {
+				structInput.ki.wVk = (ushort) VKeys.KEY_CONTROL;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(100);
 			}
-			if (shift)
-			{
-				structInput.ki.wVk = (ushort)VKeys.KEY_SHIFT;
+			if(shift) {
+				structInput.ki.wVk = (ushort) VKeys.KEY_SHIFT;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(100);
 
-				if (key.ShiftKey != VKeys.NULL)
-				{
+				if(key.ShiftKey != VKeys.NULL) {
 					//Send KEY_DOWN
-					if (PostMessage(hWnd, (int)Message.KEY_DOWN, (uint)key.VK, GetLParam(1, key.ShiftKey, 0, 0, 0, 0)))
+					if(PostMessage(hWnd, (int) Message.KEY_DOWN, (uint) key.VK, GetLParam(1, key.ShiftKey, 0, 0, 0, 0)))
 						return false;
 					Thread.Sleep(500);
 				}
@@ -754,21 +715,18 @@ namespace Keyboard
 			PostMessage(hWnd, key);
 
 			structInput.ki.dwFlags = KEYEVENTF_KEYUP;
-			if (shift && key.ShiftKey == VKeys.NULL)
-			{
-				structInput.ki.wVk = (ushort)VKeys.KEY_SHIFT;
+			if(shift && key.ShiftKey == VKeys.NULL) {
+				structInput.ki.wVk = (ushort) VKeys.KEY_SHIFT;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(100);
 			}
-			if (ctrl)
-			{
-				structInput.ki.wVk = (ushort)VKeys.KEY_CONTROL;
+			if(ctrl) {
+				structInput.ki.wVk = (ushort) VKeys.KEY_CONTROL;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(100);
 			}
-			if (alt)
-			{
-				structInput.ki.wVk = (ushort)VKeys.KEY_MENU;
+			if(alt) {
+				structInput.ki.wVk = (ushort) VKeys.KEY_MENU;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(100);
 			}
@@ -776,73 +734,68 @@ namespace Keyboard
 			return true;
 		}
 
-		public static bool SendMessageDown(IntPtr hWnd, Key key, bool checkKeyboardState)
-		{
-			if (checkKeyboardState)
+		public static bool SendMessageDown(IntPtr hWnd, Key key, bool checkKeyboardState) {
+			if(checkKeyboardState)
 				CheckKeyShiftState();
 			//Send KEY_DOWN
-			if (SendMessage(hWnd, (int)Message.KEY_DOWN, (uint)key.VK, GetLParam(1, key.VK, 0, 0, 0, 0)))
+			if(SendMessage(hWnd, (int) Message.KEY_DOWN, (uint) key.VK, GetLParam(1, key.VK, 0, 0, 0, 0)))
 				return false;
 			Thread.Sleep(100);
 
 			//Send VM_CHAR
-			if (SendMessage(hWnd, (int)Message.VM_CHAR, (uint)key.VK, GetLParam(1, key.VK, 0, 0, 0, 0)))
+			if(SendMessage(hWnd, (int) Message.VM_CHAR, (uint) key.VK, GetLParam(1, key.VK, 0, 0, 0, 0)))
 				return false;
 			Thread.Sleep(100);
 
 			return true;
 		}
 
-		public static bool SendMessageUp(IntPtr hWnd, Key key, bool checkKeyboardState)
-		{
-			if (checkKeyboardState)
+		public static bool SendMessageUp(IntPtr hWnd, Key key, bool checkKeyboardState) {
+			if(checkKeyboardState)
 				CheckKeyShiftState();
 
 			//Send KEY_UP
-			if (SendMessage(hWnd, (int)Message.KEY_UP, (uint)key.VK, GetLParam(1, key.VK, 0, 0, 1, 1)))
+			if(SendMessage(hWnd, (int) Message.KEY_UP, (uint) key.VK, GetLParam(1, key.VK, 0, 0, 1, 1)))
 				return false;
 			Thread.Sleep(100);
 
 			return true;
 		}
 
-        public static bool SendChar(IntPtr hWnd, char c, bool checkKeyboardState)
-        {
-            if (checkKeyboardState)
-                CheckKeyShiftState();
+		public static bool SendChar(IntPtr hWnd, char c, bool checkKeyboardState) {
+			if(checkKeyboardState)
+				CheckKeyShiftState();
 
-            //Send VM_CHAR
-            if (SendMessage(hWnd, (int)Message.VM_CHAR, (uint)c, 0))
-                return false;
+			//Send VM_CHAR
+			if(SendMessage(hWnd, (int) Message.VM_CHAR, (uint) c, 0))
+				return false;
 
-            return true;
-        }
+			return true;
+		}
 
-		public static bool SendMessage(IntPtr hWnd, Key key, bool checkKeyboardState)
-		{
-			if (checkKeyboardState)
+		public static bool SendMessage(IntPtr hWnd, Key key, bool checkKeyboardState) {
+			if(checkKeyboardState)
 				CheckKeyShiftState();
 
 			//Send KEY_DOWN
-			if (SendMessage(hWnd, (int)Message.KEY_DOWN, (uint)key.VK, GetLParam(1, key.VK, 0, 0, 0, 0)))
+			if(SendMessage(hWnd, (int) Message.KEY_DOWN, (uint) key.VK, GetLParam(1, key.VK, 0, 0, 0, 0)))
 				return false;
-            Thread.Sleep(0);
+			Thread.Sleep(0);
 
 			//Send VM_CHAR
-            if (SendMessage(hWnd, (int)Message.VM_CHAR, (uint)key.VK, GetLParam(1, key.VK, 0, 0, 0, 0)))
-                return false;
-            Thread.Sleep(0);
-    
+			if(SendMessage(hWnd, (int) Message.VM_CHAR, (uint) key.VK, GetLParam(1, key.VK, 0, 0, 0, 0)))
+				return false;
+			Thread.Sleep(0);
+
 			//Send KEY_UP
-            if (SendMessage(hWnd, (int)Message.KEY_UP, (uint)key.VK, GetLParam(1, key.VK, 0, 0, 1, 1)))
-                return false;
-            Thread.Sleep(0);
-			
+			if(SendMessage(hWnd, (int) Message.KEY_UP, (uint) key.VK, GetLParam(1, key.VK, 0, 0, 1, 1)))
+				return false;
+			Thread.Sleep(0);
+
 			return true;
 		}
 
-		public static bool SendMessageAll(IntPtr hWnd, Key key, bool alt, bool ctrl, bool shift)
-		{
+		public static bool SendMessageAll(IntPtr hWnd, Key key, bool alt, bool ctrl, bool shift) {
 			CheckKeyShiftState();
 			uint intReturn;
 			INPUT structInput;
@@ -853,28 +806,24 @@ namespace Keyboard
 			structInput.ki.wScan = 0;
 			structInput.ki.time = 0;
 			structInput.ki.dwFlags = 0;
-			if (alt)
-			{
-				structInput.ki.wVk = (ushort)VKeys.KEY_MENU;
+			if(alt) {
+				structInput.ki.wVk = (ushort) VKeys.KEY_MENU;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(100);
 			}
-			if (ctrl)
-			{
-				structInput.ki.wVk = (ushort)VKeys.KEY_CONTROL;
+			if(ctrl) {
+				structInput.ki.wVk = (ushort) VKeys.KEY_CONTROL;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(100);
 			}
-			if (shift)
-			{
-				structInput.ki.wVk = (ushort)VKeys.KEY_SHIFT;
+			if(shift) {
+				structInput.ki.wVk = (ushort) VKeys.KEY_SHIFT;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(100);
 
-				if (key.ShiftKey != VKeys.NULL)
-				{
+				if(key.ShiftKey != VKeys.NULL) {
 					//Send KEY_DOWN
-					if (SendMessage(hWnd, (int)Message.KEY_DOWN, (uint)key.VK, GetLParam(1, key.ShiftKey, 0, 0, 0, 0)))
+					if(SendMessage(hWnd, (int) Message.KEY_DOWN, (uint) key.VK, GetLParam(1, key.ShiftKey, 0, 0, 0, 0)))
 						return false;
 					Thread.Sleep(100);
 				}
@@ -883,21 +832,18 @@ namespace Keyboard
 			SendMessage(hWnd, key, false);
 
 			structInput.ki.dwFlags = KEYEVENTF_KEYUP;
-			if (shift && key.ShiftKey == VKeys.NULL)
-			{
-				structInput.ki.wVk = (ushort)VKeys.KEY_SHIFT;
+			if(shift && key.ShiftKey == VKeys.NULL) {
+				structInput.ki.wVk = (ushort) VKeys.KEY_SHIFT;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(100);
 			}
-			if (ctrl)
-			{
-				structInput.ki.wVk = (ushort)VKeys.KEY_CONTROL;
+			if(ctrl) {
+				structInput.ki.wVk = (ushort) VKeys.KEY_CONTROL;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(100);
 			}
-			if (alt)
-			{
-				structInput.ki.wVk = (ushort)VKeys.KEY_MENU;
+			if(alt) {
+				structInput.ki.wVk = (ushort) VKeys.KEY_MENU;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(100);
 			}
@@ -905,53 +851,46 @@ namespace Keyboard
 			return true;
 		}
 
-		public static void CheckKeyShiftState()
-		{
-			while ((GetKeyState((int)VKeys.KEY_MENU) & KEY_PRESSED) == KEY_PRESSED || (GetKeyState((int)VKeys.KEY_CONTROL) & KEY_PRESSED) == KEY_PRESSED || (GetKeyState((int)VKeys.KEY_SHIFT) & KEY_PRESSED) == KEY_PRESSED)
-			{
+		public static void CheckKeyShiftState() {
+			while((GetKeyState((int) VKeys.KEY_MENU) & KEY_PRESSED) == KEY_PRESSED || (GetKeyState((int) VKeys.KEY_CONTROL) & KEY_PRESSED) == KEY_PRESSED || (GetKeyState((int) VKeys.KEY_SHIFT) & KEY_PRESSED) == KEY_PRESSED) {
 				Thread.Sleep(1);
 			}
 		}
 		#endregion //Public
 
 		#region Private
-		private static uint GetScanCode(Messaging.VKeys key)
-		{
-			return MapVirtualKey((uint)key, MAPVK_VK_TO_VSC_EX);
+		private static uint GetScanCode(Messaging.VKeys key) {
+			return MapVirtualKey((uint) key, MAPVK_VK_TO_VSC_EX);
 		}
 
-		private static uint GetDwExtraInfo(Int16 repeatCount, Messaging.VKeys key, byte extended, byte contextCode, byte previousState, byte transitionState)
-		{
-			uint lParam = (uint)repeatCount;
-			uint scanCode = MapVirtualKey((uint)key, MAPVK_VK_TO_VSC_EX) + 0x80;
-			lParam += (uint)(scanCode * 0x10000);
-			lParam += (uint)((extended) * 0x1000000);
-			lParam += (uint)((contextCode * 2) * 0x10000000);
-			lParam += (uint)((previousState * 4) * 0x10000000);
-			lParam += (uint)((transitionState * 8) * 0x10000000);
+		private static uint GetDwExtraInfo(Int16 repeatCount, Messaging.VKeys key, byte extended, byte contextCode, byte previousState, byte transitionState) {
+			uint lParam = (uint) repeatCount;
+			uint scanCode = MapVirtualKey((uint) key, MAPVK_VK_TO_VSC_EX) + 0x80;
+			lParam += (uint) (scanCode * 0x10000);
+			lParam += (uint) ((extended) * 0x1000000);
+			lParam += (uint) ((contextCode * 2) * 0x10000000);
+			lParam += (uint) ((previousState * 4) * 0x10000000);
+			lParam += (uint) ((transitionState * 8) * 0x10000000);
 			return lParam;
 		}
 
-        private static uint GetLParam(int x, int y)
-        {
-            return (uint)((y << 16) | (x & 0xFFFF));
-        }
+		private static uint GetLParam(int x, int y) {
+			return (uint) ((y << 16) | (x & 0xFFFF));
+		}
 
-		private static uint GetLParam(Int16 repeatCount, Messaging.VKeys key, byte extended, byte contextCode, byte previousState, byte transitionState)
-		{
-			uint lParam = (uint)repeatCount;
+		private static uint GetLParam(Int16 repeatCount, Messaging.VKeys key, byte extended, byte contextCode, byte previousState, byte transitionState) {
+			uint lParam = (uint) repeatCount;
 			//uint scanCode = MapVirtualKey((uint)key, MAPVK_VK_TO_CHAR);
-            uint scanCode = GetScanCode(key);
-			lParam += (uint)(scanCode * 0x10000);
-			lParam += (uint)((extended) * 0x1000000);
-			lParam += (uint)((contextCode * 2) * 0x10000000);
-			lParam += (uint)((previousState * 4) * 0x10000000);
-			lParam += (uint)((transitionState * 8) * 0x10000000);
+			uint scanCode = GetScanCode(key);
+			lParam += (uint) (scanCode * 0x10000);
+			lParam += (uint) ((extended) * 0x1000000);
+			lParam += (uint) ((contextCode * 2) * 0x10000000);
+			lParam += (uint) ((previousState * 4) * 0x10000000);
+			lParam += (uint) ((transitionState * 8) * 0x10000000);
 			return lParam;
 		}
 
-		private static uint RemoveLeadingDigit(uint number)
-		{
+		private static uint RemoveLeadingDigit(uint number) {
 			return (number - ((number % (0x10000000)) * (0x10000000)));
 		}
 		#endregion Private

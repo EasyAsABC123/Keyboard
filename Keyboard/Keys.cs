@@ -7,29 +7,71 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Windows.Forms;
 
-namespace Keyboard
-{
+namespace Keyboard {
 	[Serializable]
-	public class Keys
-	{
-		public Key LootKey { get; set; }
-		public Key FindMobKey { get; set; }
-		public Key RestKey { get; set; }
-		public Key RotateKey { get; set; }
-		public Key EscKey { get; set; }
-		public Key TargetSelf { get; set; }
-		public Key StartStop { get; set; }
-		public Key AttackKey { get; set; }
-		public Key ReturnToTownKey { get; set; }
-		public Key Forward { get; set; }
-		public Key Backwards { get; set; }
-		public Key Left { get; set; }
-		public Key Right { get; set; }
-		public Key StrafeLeft { get; set; }
-		public Key StrafeRight { get; set; }
+	public class Keys {
+		public Key LootKey {
+			get;
+			set;
+		}
+		public Key FindMobKey {
+			get;
+			set;
+		}
+		public Key RestKey {
+			get;
+			set;
+		}
+		public Key RotateKey {
+			get;
+			set;
+		}
+		public Key EscKey {
+			get;
+			set;
+		}
+		public Key TargetSelf {
+			get;
+			set;
+		}
+		public Key StartStop {
+			get;
+			set;
+		}
+		public Key AttackKey {
+			get;
+			set;
+		}
+		public Key ReturnToTownKey {
+			get;
+			set;
+		}
+		public Key Forward {
+			get;
+			set;
+		}
+		public Key Backwards {
+			get;
+			set;
+		}
+		public Key Left {
+			get;
+			set;
+		}
+		public Key Right {
+			get;
+			set;
+		}
+		public Key StrafeLeft {
+			get;
+			set;
+		}
+		public Key StrafeRight {
+			get;
+			set;
+		}
 
-		public Keys()
-		{
+		public Keys() {
 			this.AttackKey = new Key(Messaging.VKeys.KEY_1, Messaging.ShiftType.NONE);
 			this.StartStop = new Key(Messaging.VKeys.KEY_ESCAPE, Messaging.ShiftType.ALT_CTRL);
 			this.EscKey = new Key(Messaging.VKeys.KEY_ESCAPE);
@@ -47,41 +89,34 @@ namespace Keyboard
 			this.StrafeRight = new Key(Messaging.VKeys.KEY_E);
 		}
 
-		public static void Serialize(string path, Keys keys)
-		{
+		public static void Serialize(string path, Keys keys) {
 			XmlSerializer serializer = new XmlSerializer(typeof(Keys));
 			FileStream xmlStream = new FileStream(path, FileMode.Create, FileAccess.Write);
 			serializer.Serialize(xmlStream, keys);
 			xmlStream.Close();
 		}
 
-		public static void Serialize(Stream stream, Keys keys)
-		{
+		public static void Serialize(Stream stream, Keys keys) {
 			XmlSerializer serializer = new XmlSerializer(typeof(Keys));
 			Stream xmlStream = stream;
 			serializer.Serialize(xmlStream, keys);
 			xmlStream.Close();
 		}
 
-		public static Keys Deserialize(string path)
-		{
-			try
-			{
+		public static Keys Deserialize(string path) {
+			try {
 				Keys keys = new Keys();
 				XmlSerializer serializer = new XmlSerializer(typeof(Keys));
 				FileStream xmlStream = new FileStream(path, FileMode.Open, FileAccess.Read);
 				keys = serializer.Deserialize(xmlStream) as Keys;
 				xmlStream.Close();
 				return keys;
-			}
-			catch
-			{
+			} catch {
 				return new Keys();
 			}
 		}
 
-		public static Keys Deserialize(Stream stream)
-		{
+		public static Keys Deserialize(Stream stream) {
 			Keys keys = new Keys();
 			XmlSerializer serializer = new XmlSerializer(typeof(Keys));
 			keys = serializer.Deserialize(stream) as Keys;

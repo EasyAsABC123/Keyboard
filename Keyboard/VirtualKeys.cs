@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Keyboard
-{
+namespace Keyboard {
 	/// <summary>
 	/// Enumeration for virtual keys.
 	/// </summary>
 	public enum VirtualKeys
-		: ushort
-	{
+		: ushort {
 		/// <summary>Left mouse button.</summary>
 		LeftButton = 0x01,
 		/// <summary>Right mouse button.</summary>

@@ -519,23 +519,23 @@ namespace Keyboard
 			PostMessage(hWnd, (int) WindowsMessages.WM_MOUSEMOVE, 0, GetLParam(x, y));
 		}
 
-		public static void BackgroundMouseClick(IntPtr hWnd, Key key, int x, int y)
+		public static void BackgroundMouseClick(IntPtr hWnd, Key key, int x, int y, int delay = 100)
 		{
 			switch (key.Vk)
 			{
 				case VKeys.KEY_MBUTTON:
 					PostMessage(hWnd, (int) Message.MBUTTONDOWN, (uint) key.Vk, GetLParam(x, y));
-					Thread.Sleep(10);
+					Thread.Sleep(delay);
 					PostMessage(hWnd, (int) Message.MBUTTONUP, (uint) key.Vk, GetLParam(x, y));
 					break;
 				case VKeys.KEY_LBUTTON:
 					PostMessage(hWnd, (int) Message.LBUTTONDOWN, (uint) key.Vk, GetLParam(x, y));
-					Thread.Sleep(10);
+					Thread.Sleep(delay);
 					PostMessage(hWnd, (int) Message.LBUTTONUP, (uint) key.Vk, GetLParam(x, y));
 					break;
 				case VKeys.KEY_RBUTTON:
 					PostMessage(hWnd, (int) Message.RBUTTONDOWN, (uint) key.Vk, GetLParam(x, y));
-					Thread.Sleep(10);
+					Thread.Sleep(delay);
 					PostMessage(hWnd, (int) Message.RBUTTONUP, (uint) key.Vk, GetLParam(x, y));
 					break;
 			}
@@ -561,25 +561,25 @@ namespace Keyboard
 			SendMessage(hWnd, new Key(VKeys.KEY_RETURN), true);
 		}
 
-		public static bool ForegroundKeyPress(Key key)
+		public static bool ForegroundKeyPress(Key key, int delay = 100)
 		{
 			bool temp = true;
 
 			temp &= ForegroundKeyDown(key);
-			Thread.Sleep(50);
+			Thread.Sleep(delay);
 			temp &= ForegroundKeyUp(key);
-			Thread.Sleep(50);
+			Thread.Sleep(delay);
 			return temp;
 		}
 
-		public static bool ForegroundKeyPress(IntPtr hWnd, Key key)
+		public static bool ForegroundKeyPress(IntPtr hWnd, Key key, int delay = 100)
 		{
 			bool temp = true;
 
 			temp &= ForegroundKeyDown(hWnd, key);
-			Thread.Sleep(100);
+			Thread.Sleep(delay);
 			temp &= ForegroundKeyUp(hWnd, key);
-			Thread.Sleep(100);
+			Thread.Sleep(delay);
 			return temp;
 		}
 
@@ -644,7 +644,7 @@ namespace Keyboard
 			return ForegroundKeyUp(key);
 		}
 
-		public static bool ForegroundKeyPressAll(IntPtr hWnd, Key key, bool alt, bool ctrl, bool shift)
+		public static bool ForegroundKeyPressAll(IntPtr hWnd, Key key, bool alt, bool ctrl, bool shift, int delay = 100)
 		{
 			if (GetForegroundWindow() != hWnd)
 			{
@@ -664,25 +664,25 @@ namespace Keyboard
 			{
 				structInput.ki.wVk = (ushort) VKeys.KEY_MENU;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
-				Thread.Sleep(100);
+				Thread.Sleep(delay);
 			}
 			if (ctrl)
 			{
 				structInput.ki.wVk = (ushort) VKeys.KEY_CONTROL;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
-				Thread.Sleep(100);
+				Thread.Sleep(delay);
 			}
 			if (shift)
 			{
 				structInput.ki.wVk = (ushort) VKeys.KEY_SHIFT;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
-				Thread.Sleep(100);
+				Thread.Sleep(delay);
 
 				if (key.ShiftKey != VKeys.NULL)
 				{
 					structInput.ki.wVk = (ushort) key.ShiftKey;
 					intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
-					Thread.Sleep(100);
+					Thread.Sleep(delay);
 				}
 			}
 
@@ -694,41 +694,41 @@ namespace Keyboard
 			{
 				structInput.ki.wVk = (ushort) VKeys.KEY_SHIFT;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
-				Thread.Sleep(100);
+				Thread.Sleep(delay);
 			}
 			if (ctrl)
 			{
 				structInput.ki.wVk = (ushort) VKeys.KEY_CONTROL;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
-				Thread.Sleep(100);
+				Thread.Sleep(delay);
 			}
 			if (alt)
 			{
 				structInput.ki.wVk = (ushort) VKeys.KEY_MENU;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
-				Thread.Sleep(100);
+				Thread.Sleep(delay);
 			}
 			return true;
 		}
 
-		public static bool PostMessage(IntPtr hWnd, Key key)
+		public static bool PostMessage(IntPtr hWnd, Key key, int delay = 100)
 		{
 			//Send KEY_DOWN
 			if (PostMessage(hWnd, (int) Message.KEY_DOWN, (uint) key.Vk, GetLParam(1, key.Vk, 0, 0, 0, 0)))
 				return false;
-			Thread.Sleep(30);
+			Thread.Sleep(delay);
 			//Send VM_CHAR
 			if (PostMessage(hWnd, (int) Message.VM_CHAR, (uint) key.Vk, GetLParam(1, key.Vk, 0, 0, 0, 0)))
 				return false;
-			Thread.Sleep(30);
+			Thread.Sleep(delay);
 			if (PostMessage(hWnd, (int) Message.KEY_UP, (uint) key.Vk, GetLParam(1, key.Vk, 0, 0, 0, 0)))
 				return false;
-			Thread.Sleep(30);
+			Thread.Sleep(delay);
 
 			return true;
 		}
 
-		public static bool PostMessageAll(IntPtr hWnd, Key key, bool alt, bool ctrl, bool shift)
+		public static bool PostMessageAll(IntPtr hWnd, Key key, bool alt, bool ctrl, bool shift, int delay = 100)
 		{
 			CheckKeyShiftState();
 			uint intReturn;
@@ -744,26 +744,26 @@ namespace Keyboard
 			{
 				structInput.ki.wVk = (ushort) VKeys.KEY_MENU;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
-				Thread.Sleep(100);
+				Thread.Sleep(delay);
 			}
 			if (ctrl)
 			{
 				structInput.ki.wVk = (ushort) VKeys.KEY_CONTROL;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
-				Thread.Sleep(100);
+				Thread.Sleep(delay);
 			}
 			if (shift)
 			{
 				structInput.ki.wVk = (ushort) VKeys.KEY_SHIFT;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
-				Thread.Sleep(100);
+				Thread.Sleep(delay);
 
 				if (key.ShiftKey != VKeys.NULL)
 				{
 					//Send KEY_DOWN
 					if (PostMessage(hWnd, (int) Message.KEY_DOWN, (uint) key.Vk, GetLParam(1, key.ShiftKey, 0, 0, 0, 0)))
 						return false;
-					Thread.Sleep(500);
+					Thread.Sleep(delay);
 				}
 			}
 
@@ -774,42 +774,42 @@ namespace Keyboard
 			{
 				structInput.ki.wVk = (ushort) VKeys.KEY_SHIFT;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
-				Thread.Sleep(100);
+				Thread.Sleep(delay);
 			}
 			if (ctrl)
 			{
 				structInput.ki.wVk = (ushort) VKeys.KEY_CONTROL;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
-				Thread.Sleep(100);
+				Thread.Sleep(delay);
 			}
 			if (alt)
 			{
 				structInput.ki.wVk = (ushort) VKeys.KEY_MENU;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
-				Thread.Sleep(100);
+				Thread.Sleep(delay);
 			}
 
 			return true;
 		}
 
-		public static bool SendMessageDown(IntPtr hWnd, Key key, bool checkKeyboardState)
+		public static bool SendMessageDown(IntPtr hWnd, Key key, bool checkKeyboardState, int delay = 100)
 		{
 			if (checkKeyboardState)
 				CheckKeyShiftState();
 			//Send KEY_DOWN
 			if (SendMessage(hWnd, (int) Message.KEY_DOWN, (uint) key.Vk, GetLParam(1, key.Vk, 0, 0, 0, 0)))
 				return false;
-			Thread.Sleep(100);
+			Thread.Sleep(delay);
 
 			//Send VM_CHAR
 			if (SendMessage(hWnd, (int) Message.VM_CHAR, (uint) key.Vk, GetLParam(1, key.Vk, 0, 0, 0, 0)))
 				return false;
-			Thread.Sleep(100);
+			Thread.Sleep(delay);
 
 			return true;
 		}
 
-		public static bool SendMessageUp(IntPtr hWnd, Key key, bool checkKeyboardState)
+		public static bool SendMessageUp(IntPtr hWnd, Key key, bool checkKeyboardState, int delay = 100)
 		{
 			if (checkKeyboardState)
 				CheckKeyShiftState();
@@ -817,7 +817,7 @@ namespace Keyboard
 			//Send KEY_UP
 			if (SendMessage(hWnd, (int) Message.KEY_UP, (uint) key.Vk, GetLParam(1, key.Vk, 0, 0, 1, 1)))
 				return false;
-			Thread.Sleep(100);
+			Thread.Sleep(delay);
 
 			return true;
 		}
@@ -834,7 +834,7 @@ namespace Keyboard
 			return true;
 		}
 
-		public static bool SendMessage(IntPtr hWnd, Key key, bool checkKeyboardState)
+		public static bool SendMessage(IntPtr hWnd, Key key, bool checkKeyboardState, int delay = 100)
 		{
 			if (checkKeyboardState)
 				CheckKeyShiftState();
@@ -842,57 +842,52 @@ namespace Keyboard
 			//Send KEY_DOWN
 			if (SendMessage(hWnd, (int) Message.KEY_DOWN, (uint) key.Vk, GetLParam(1, key.Vk, 0, 0, 0, 0)))
 				return false;
-			Thread.Sleep(0);
+			Thread.Sleep(delay);
 
 			//Send VM_CHAR
 			if (SendMessage(hWnd, (int) Message.VM_CHAR, (uint) key.Vk, GetLParam(1, key.Vk, 0, 0, 0, 0)))
 				return false;
-			Thread.Sleep(0);
+			Thread.Sleep(delay);
 
 			//Send KEY_UP
 			if (SendMessage(hWnd, (int) Message.KEY_UP, (uint) key.Vk, GetLParam(1, key.Vk, 0, 0, 1, 1)))
 				return false;
-			Thread.Sleep(0);
+			Thread.Sleep(delay);
 
 			return true;
 		}
 
-		public static bool SendMessageAll(IntPtr hWnd, Key key, bool alt, bool ctrl, bool shift)
+		public static bool SendMessageAll(IntPtr hWnd, Key key, bool alt, bool ctrl, bool shift, int delay = 100)
 		{
 			CheckKeyShiftState();
 			uint intReturn;
-			INPUT structInput;
-			structInput = new INPUT();
-			structInput.type = INPUT_KEYBOARD;
+			INPUT structInput = new INPUT {type = INPUT_KEYBOARD, ki = {wScan = 0, time = 0, dwFlags = 0}};
 
 			// Key down shift, ctrl, and/or alt
-			structInput.ki.wScan = 0;
-			structInput.ki.time = 0;
-			structInput.ki.dwFlags = 0;
 			if (alt)
 			{
 				structInput.ki.wVk = (ushort) VKeys.KEY_MENU;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
-				Thread.Sleep(100);
+				Thread.Sleep(delay);
 			}
 			if (ctrl)
 			{
 				structInput.ki.wVk = (ushort) VKeys.KEY_CONTROL;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
-				Thread.Sleep(100);
+				Thread.Sleep(delay);
 			}
 			if (shift)
 			{
 				structInput.ki.wVk = (ushort) VKeys.KEY_SHIFT;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
-				Thread.Sleep(100);
+				Thread.Sleep(delay);
 
 				if (key.ShiftKey != VKeys.NULL)
 				{
 					//Send KEY_DOWN
 					if (SendMessage(hWnd, (int) Message.KEY_DOWN, (uint) key.Vk, GetLParam(1, key.ShiftKey, 0, 0, 0, 0)))
 						return false;
-					Thread.Sleep(100);
+					Thread.Sleep(delay);
 				}
 			}
 
@@ -903,19 +898,19 @@ namespace Keyboard
 			{
 				structInput.ki.wVk = (ushort) VKeys.KEY_SHIFT;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
-				Thread.Sleep(100);
+				Thread.Sleep(delay);
 			}
 			if (ctrl)
 			{
 				structInput.ki.wVk = (ushort) VKeys.KEY_CONTROL;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
-				Thread.Sleep(100);
+				Thread.Sleep(delay);
 			}
 			if (alt)
 			{
 				structInput.ki.wVk = (ushort) VKeys.KEY_MENU;
 				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
-				Thread.Sleep(100);
+				Thread.Sleep(delay);
 			}
 
 			return true;

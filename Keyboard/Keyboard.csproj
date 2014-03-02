@@ -54,7 +54,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Key.cs" />
-    <Compile Include="Keys.cs" />
     <Compile Include="Messaging.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SetKey.cs">
@@ -63,7 +62,6 @@
     <Compile Include="SetKey.Designer.cs">
       <DependentUpon>SetKey.cs</DependentUpon>
     </Compile>
-    <Compile Include="VirtualKeys.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SetKey.resx">

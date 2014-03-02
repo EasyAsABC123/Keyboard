@@ -1,0 +1,7 @@
+Z:\Documents\Code\Keyboard\Keyboard\bin\Debug\Data\Keyboard.dll
+Z:\Documents\Code\Keyboard\Keyboard\bin\Debug\Data\Keyboard.pdb
+Z:\Documents\Code\Keyboard\Keyboard\obj\Debug\Keyboard.csprojResolveAssemblyReference.cache
+Z:\Documents\Code\Keyboard\Keyboard\obj\Debug\Keyboard.SetKey.resources
+Z:\Documents\Code\Keyboard\Keyboard\obj\Debug\Keyboard.csproj.GenerateResource.Cache
+Z:\Documents\Code\Keyboard\Keyboard\obj\Debug\Keyboard.dll
+Z:\Documents\Code\Keyboard\Keyboard\obj\Debug\Keyboard.pdb

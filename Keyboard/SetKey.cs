@@ -79,7 +79,7 @@ namespace Keyboard
 				this.ctrlChkBox.Checked = true;
 			if ((this.key.ShiftType & Messaging.ShiftType.SHIFT) == Messaging.ShiftType.SHIFT)
 				this.shiftChkBox.Checked = true;
-			this.keyChoices.SelectedItem = key.VK;
+			this.keyChoices.SelectedItem = key.Vk;
 			this.shiftKeys.SelectedItem = key.ShiftKey;
 		}
 
@@ -105,7 +105,7 @@ namespace Keyboard
 				this.ctrlChkBox.Checked = true;
 			if ((this.key.ShiftType & Messaging.ShiftType.SHIFT) == Messaging.ShiftType.SHIFT)
 				this.shiftChkBox.Checked = true;
-			this.keyChoices.SelectedItem = this.key.VK;
+			this.keyChoices.SelectedItem = this.key.Vk;
 			this.shiftKeys.SelectedItem = key.ShiftKey;
 		}
 		#endregion Constructors
@@ -126,7 +126,7 @@ namespace Keyboard
 		/// <param name="e">The selected index change mouse event.</param>
 		private void keyChoices_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			this.key.VK = (Messaging.VKeys)this.keyChoices.SelectedItem;
+			this.key.Vk = (Messaging.VKeys)this.keyChoices.SelectedItem;
 		}
 
 		/// <summary>Event to handle the shift keys index change.</summary>

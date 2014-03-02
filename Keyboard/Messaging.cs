@@ -53,6 +53,20 @@ namespace Keyboard
 
 		#endregion Constants
 
+		[StructLayout(LayoutKind.Explicit)]
+		struct Helper
+		{
+			[FieldOffset(0)]
+			public short Value;
+			[FieldOffset(0)]
+			public byte Low;
+			[FieldOffset(1)]
+			public byte High;
+		}
+
+		[DllImport("user32.dll")]
+		static extern short VkKeyScan(char ch);
+
 		[DllImport("user32.dll", SetLastError = false)]
 		private static extern IntPtr GetMessageExtraInfo();
 
@@ -512,6 +526,16 @@ namespace Keyboard
 				return true;
 
 			return false;
+		}
+
+		public static uint GetVirtualKeyCode(char c)
+		{
+			var helper = new Helper { Value = VkKeyScan(c) };
+
+			byte virtualKeyCode = helper.Low;
+			byte shiftState = helper.High;
+
+			return virtualKeyCode;
 		}
 
 		public static void BackgroundMousePosition(IntPtr hWnd, int x, int y)

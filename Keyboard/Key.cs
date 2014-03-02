@@ -36,7 +36,7 @@ namespace Keyboard
 		public Key(char c)
 		{
 			_buttonCounter = 0;
-			Vk = (Messaging.VKeys) c;
+			Vk = (Messaging.VKeys)Messaging.GetVirtualKeyCode(c);
 			ShiftKey = Messaging.VKeys.NULL;
 			ShiftType = Messaging.ShiftType.NONE;
 		}

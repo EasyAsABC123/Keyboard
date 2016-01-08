@@ -9,14 +9,17 @@ This is useful for any type of automation, or testing.  Although it's original r
 
 Demo added that shows this process working on the standard Notepad application, which only accepts Foreground input.  Use notepad++ or another application to test background key presses.
 
-*PostMessage and SendMessage
-***How to send background keypresses.
+PostMessage and SendMessage
+=======
+How to send background keypresses.
+--------
 
 Hello, This I feel is something that is completely misunderstood by most people so i thought i’d drop a knowledge bomb.
 PostMessage and SendMessage are two c/c++ functions that allow for a programmer to access Win32 API messaging.
 The parameters required for these messages are `hWnd`, `wMsg`, `wParam`, `lParam`.
 
-***Details:
+Details:
+---------
 `hWnd`: This is the handle to the window that you wish to send a message to in this case that will be the aion.bin mainwindowhandle.
 `wMsg`: This is the message that you plan on sending, generally to impersonate key presses you’ll need to send multiple messages, below is a simple list.
 

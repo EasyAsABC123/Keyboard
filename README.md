@@ -256,17 +256,15 @@ NULL = 0x0,
 
 `lParam`: This is a structure and is quite complex. Since we are simply dealing with keypresses messaging this simplifies the lParam quite a bit.
 
-Here is the bit mapping for the 32-bit
-`lParam`: 0-15
+Here is the bit mapping for the 32-bit `lParam`: 
+`0-15`  Specifies the repeat count. The value is the number of times the keystroke is repeated as a result of the user holding down the key. The repeat count is always one for a WM_KEYUP message.
 
-Specifies the repeat count. The value is the number of times the keystroke is repeated as a result of the user holding down the key. The repeat count is always one for a WM_KEYUP message.
-
-16-23 Specifies the scan code. The value depends on the original equipment manufacturer (OEM).
-24 Specifies whether the key is an extended key, such as the right-hand ALT and CTRL keys that appear on an enhanced 101- or 102-key keyboard. The value is 1 if it is an extended key; otherwise, it is 0.
-25-28 Reserved; do not use.
-29 Specifies the context code. The value is always 0 for a WM_KEYUP message.
-30 Specifies the previous key state. The value is always 1 for a WM_KEYUP message.
-31 Specifies the transition state. The value is always 1 for a WM_KEYUP message. Return Value
+`16-23`  Specifies the scan code. The value depends on the original equipment manufacturer (OEM).
+`24`  Specifies whether the key is an extended key, such as the right-hand ALT and CTRL keys that appear on an enhanced 101- or 102-key keyboard. The value is 1 if it is an extended key; otherwise, it is 0.
+`25-28`  Reserved; do not use.
+`29`  Specifies the context code. The value is always 0 for a WM_KEYUP message.
+`30`  Specifies the previous key state. The value is always 1 for a WM_KEYUP message.
+`31`  Specifies the transition state. The value is always 1 for a WM_KEYUP message. Return Value
 
 ```cs
 const uint MAPVK_VK_TO_VSC = 0x00;

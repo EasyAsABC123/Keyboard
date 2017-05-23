@@ -369,13 +369,13 @@ namespace Keyboard
 		public enum ShiftType
 		{
 			NONE = 0x0,
-			ALT = 0x1,
+			SHIFT = 0x1,
 			CTRL = 0x2,
-			ALT_CTRL = 0x3,
-			SHIFT = 0x4,
-			ALT_SHIFT = 0x5,
-			CTRL_SHIFT = 0x6,
-			ALT_CTRL_SHIFT = 0x7
+			SHIFT_CTRL = SHIFT | CTRL,
+			ALT = 0x4,
+			SHIFT_ALT = ALT | SHIFT,
+			CTRL_ALT = CTRL | ALT,
+			SHIFT_CTRL_ALT = SHIFT | CTRL | ALT
 		}
 
 		public enum Message

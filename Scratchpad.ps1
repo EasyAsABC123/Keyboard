@@ -1,0 +1,64 @@
+﻿if ($null -eq $P -or $P.HasExited) {
+    $P = New-Object System.Diagnostics.Process
+    $P.StartInfo.FileName = 'MSTSC.exe'
+    #$P.StartInfo.Arguments = "C:\Users\Freddie\Desktop\DellDesktop.rdp"
+    $P.StartInfo.Arguments = "C:\Users\Freddie\Desktop\FS-70-533-DC.rdp"
+    $null = $P.Start()
+}
+
+
+$P.MainWindowTitle
+$H = $P.MainWindowHandle
+$H
+
+#$P.WaitForInputIdle()
+#[TestTest.Test]::SetForegroundWindow($H)
+
+function Send-Key {
+    param(
+        [string]$Key
+        #[int]$Handle
+    )
+
+    $EnumVal = "KEY_{0}" -f $Key.ToUpper()
+    $KeyObj = New-Object Keyboard.Key ([Keyboard.Messaging+VKeys]::($EnumVal))
+    $KeyObj.PressBackground($H)
+
+}
+
+#$Win = New-Object Keyboard.Key ([Keyboard.Messaging+VKeys]::KEY_LMENU)
+#$Enter = New-Object Keyboard.Key ([Keyboard.Messaging+VKeys]::KEY_RETURN)
+
+#$Enter.PressForeground($H)
+#$Enter.PressBackground($H)
+#$Enter.Press($H, $true)
+#[System.Windows.Forms.SendKeys]::SendWait("^{c}")
+
+$LCtrl = New-Object Keyboard.Key ([Keyboard.Messaging+VKeys]::KEY_LCONTROL)
+$Esc = New-Object Keyboard.Key ([Keyboard.Messaging+VKeys]::KEY_ESCAPE)
+
+Start-Sleep 3
+[TestTest.Test]::SetForegroundWindow($H)
+
+Send-Key 'S'
+
+$LCtrl.Down($H)
+Start-Sleep -Milliseconds 20
+$Esc.Down($H)
+Start-Sleep -Milliseconds 20
+$Esc.Up($H)
+Start-Sleep -Milliseconds 20
+$LCtrl.Up($H)
+
+
+<#
+$wsh = New-Object -Com WScript.Shell
+$wsh.AppActivate($P.MainWindowTitle)
+start-sleep -m 250
+$wsh.SendKeys('{TAB}')
+start-sleep -m 250
+$wsh.SendKeys('{ENTER}')
+
+#http://www.codeguru.com/vb/gen/vb_system/keyboard/article.php/c14629/SendKeys.htm
+$SK = New-Object System.Windows.Forms.SendKeys
+#>

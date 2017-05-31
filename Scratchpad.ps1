@@ -1,16 +1,35 @@
-﻿if ($null -eq $P -or $P.HasExited) {
-    $P = New-Object System.Diagnostics.Process
-    $P.StartInfo.FileName = 'MSTSC.exe'
-    #$P.StartInfo.Arguments = "C:\Users\Freddie\Desktop\DellDesktop.rdp"
-    $P.StartInfo.Arguments = "C:\Users\Freddie\Desktop\FS-70-533-DC.rdp"
-    $null = $P.Start()
+﻿ipmo C:\Githubdata\Jimmy
+ipmo C:\Githubdata\RaxIntensiveCreds
+Add-Type -Path C:\dev\Keyboard\Keyboard\bin\x64\Debug\Keyboard.dll
+Add-Type -TypeDefinition @'
+using System;  
+using System.Runtime.InteropServices;
+namespace Test2
+{
+    public class Test
+    {
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetActiveWindow();
+    }
 }
+'@
+
+if ($null -eq $P -or $P.HasExited) {
+    $P = Get-Process RTS3App
+    #$P.StartInfo.FileName = 'MSTSC.exe'
+    #$P.StartInfo.Arguments = "C:\Users\Freddie\Desktop\DellDesktop.rdp"
+    #$P.StartInfo.Arguments = "C:\Users\Freddie\Desktop\FS-70-533-DC.rdp"
+    #$null = $P.Start()
+}
+
+$Id = 'Farmtest'
+Open-RoyalTSConnection -ComputerName 'bts.lon5.farm.rackspace.com' -Username (Get-IntUsername -Cust) -Password (Get-IntPassword -Cust) -DisplayName $Id -NoRdGateway -NoNla
 
 
 $P.MainWindowTitle
 $H = $P.MainWindowHandle
 $H
-
+return
 #$P.WaitForInputIdle()
 #[TestTest.Test]::SetForegroundWindow($H)
 
@@ -22,7 +41,7 @@ function Send-Key {
 
     $EnumVal = "KEY_{0}" -f $Key.ToUpper()
     $KeyObj = New-Object Keyboard.Key ([Keyboard.Messaging+VKeys]::($EnumVal))
-    $KeyObj.PressBackground($H)
+    $KeyObj.PressForeground($H)
 
 }
 
@@ -36,6 +55,9 @@ function Send-Key {
 
 $LCtrl = New-Object Keyboard.Key ([Keyboard.Messaging+VKeys]::KEY_LCONTROL)
 $Esc = New-Object Keyboard.Key ([Keyboard.Messaging+VKeys]::KEY_ESCAPE)
+
+$S = New-Object Keyboard.Key ([Keyboard.Messaging+VKeys]::KEY_S)
+
 
 Start-Sleep 3
 [TestTest.Test]::SetForegroundWindow($H)

@@ -37,10 +37,10 @@ namespace Keyboard
 		private const uint KEYEVENTF_NONE = 0x0;
 
 		/// <summary>Code for extended key pressed.</summary>
-		private const uint KEYEVENTF_EXTENDEDKEY = 0x1;
+		private const uint KEYEVENTF_EXTENDEDKEY = 0x0001;
 
 		/// <summary>Code for keyup event.</summary>
-		private const uint KEYEVENTF_KEYUP = 0x2;
+		private const uint KEYEVENTF_KEYUP = 0x0002;
 
 		/// <summary>Mouse input type.</summary>
 		private const int INPUT_MOUSE = 0;
@@ -82,18 +82,18 @@ namespace Keyboard
 		[DllImport("user32.dll")]
 		private static extern bool GetKeyboardState(byte[] lpKeyState);
 
-		/// <summary>Allows for foreground hardware keyboard key presses</summary>
-		/// <param name="nInputs">The number of inputs in pInputs</param>
-		/// <param name="pInputs">A Input structure for what is to be pressed.</param>
-		/// <param name="cbSize">The size of the structure.</param>
-		/// <returns>A message.</returns>
-		[DllImport("user32.dll", SetLastError = true)]
-		private static extern uint SendInput(uint nInputs, ref INPUT pInputs, int cbSize);
+        /// <summary>Allows for foreground hardware keyboard key presses</summary>
+        /// <param name="nInputs">The number of inputs in pInputs</param>
+        /// <param name="pInputs">A Input structure for what is to be pressed.</param>
+        /// <param name="cbSize">The size of the structure.</param>
+        /// <returns>A message.</returns>
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern uint SendInput(uint nInputs, INPUT[] pInputs, int cbSize);
 
-		/// <summary>
-		///     The GetForegroundWindow function returns a handle to the foreground window.
-		/// </summary>
-		[DllImport("user32.dll")]
+        /// <summary>
+        ///     The GetForegroundWindow function returns a handle to the foreground window.
+        /// </summary>
+        [DllImport("user32.dll")]
 		private static extern IntPtr GetForegroundWindow();
 
 		[DllImport("user32.dll")]
@@ -349,23 +349,62 @@ namespace Keyboard
 			WM_APP = 0x8000
 		}
 
-		public struct KEYBDINPUT
-		{
-			public ushort wVk;
-			public ushort wScan;
-			public uint dwFlags;
-			public long time;
-			public uint dwExtraInfo;
-		};
+	    [StructLayout(LayoutKind.Sequential)]
+	    struct MOUSEINPUT
+	    {
+	        public int dx;
+	        public int dy;
+	        public uint mouseData;
+	        public uint dwFlags;
+	        public uint time;
+	        public IntPtr dwExtraInfo;
+	    };
 
-		[StructLayout(LayoutKind.Explicit, Size = 28)]
-		public struct INPUT
-		{
-			[FieldOffset(0)] public uint type;
-			[FieldOffset(4)] public KEYBDINPUT ki;
-		};
+        [StructLayout(LayoutKind.Sequential)]
+	    struct KEYBDINPUT
+	    {
+	        /*Virtual Key code.  Must be from 1-254.  If the dwFlags member specifies KEYEVENTF_UNICODE, wVk must be 0.*/
+	        public ushort wVk;
 
-		[Serializable]
+	        /*A hardware scan code for the key. If dwFlags specifies KEYEVENTF_UNICODE, wScan specifies a Unicode character which is to be sent to the foreground application.*/
+	        public ushort wScan;
+
+	        /*Specifies various aspects of a keystroke.  See the KEYEVENTF_ constants for more information.*/
+	        public uint dwFlags;
+
+	        /*The time stamp for the event, in milliseconds. If this parameter is zero, the system will provide its own time stamp.*/
+	        public uint time;
+
+	        /*An additional value associated with the keystroke. Use the GetMessageExtraInfo function to obtain this information.*/
+	        public IntPtr dwExtraInfo;
+	    };
+
+	    [StructLayout(LayoutKind.Sequential)]
+	    struct HARDWAREINPUT
+	    {
+	        public uint uMsg;
+	        public ushort wParamL;
+	        public ushort wParamH;
+	    };
+
+	    struct INPUT
+	    {
+	        public int type;
+	        public InputUnion u;
+	    };
+
+        [StructLayout(LayoutKind.Explicit)]
+	    struct InputUnion
+	    {
+	        [FieldOffset(0)]
+	        public MOUSEINPUT mi;
+	        [FieldOffset(0)]
+	        public KEYBDINPUT ki;
+	        [FieldOffset(0)]
+	        public HARDWAREINPUT hi;
+	    }
+
+        [Serializable]
 		public enum ShiftType
 		{
 			NONE = 0x0,
@@ -615,12 +654,12 @@ namespace Keyboard
 			structInput.type = INPUT_KEYBOARD;
 
 			// Key down shift, ctrl, and/or alt
-			structInput.ki.wScan = 0;
-			structInput.ki.time = 0;
-			structInput.ki.dwFlags = 0;
+			structInput.u.ki.wScan = 0;
+			structInput.u.ki.time = 0;
+			structInput.u.ki.dwFlags = 0;
 			// Key down the actual key-code
-			structInput.ki.wVk = (ushort) key.Vk;
-			intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
+			structInput.u.ki.wVk = (ushort) key.Vk;
+			intReturn = SendInput(1, new []{structInput}, Marshal.SizeOf(new INPUT()));
 
 			// Key up shift, ctrl, and/or alt
 			//keybd_event((int)key.VK, GetScanCode(key.VK) + 0x80, KEYEVENTF_NONE, 0);
@@ -636,15 +675,15 @@ namespace Keyboard
 			structInput.type = INPUT_KEYBOARD;
 
 			// Key down shift, ctrl, and/or alt
-			structInput.ki.wScan = 0;
-			structInput.ki.time = 0;
-			structInput.ki.dwFlags = 0;
+			structInput.u.ki.wScan = 0;
+			structInput.u.ki.time = 0;
+			structInput.u.ki.dwFlags = 0;
 			// Key down the actual key-code
-			structInput.ki.wVk = (ushort) key.Vk;
+			structInput.u.ki.wVk = (ushort) key.Vk;
 
 			// Key up the actual key-code
-			structInput.ki.dwFlags = KEYEVENTF_KEYUP;
-			intReturn = SendInput(1, ref structInput, Marshal.SizeOf(typeof (INPUT)));
+			structInput.u.ki.dwFlags = KEYEVENTF_KEYUP;
+			intReturn = SendInput(1, new []{structInput}, Marshal.SizeOf(typeof (INPUT)));
 			return true;
 		}
 
@@ -681,31 +720,31 @@ namespace Keyboard
 			structInput.type = INPUT_KEYBOARD;
 
 			// Key down shift, ctrl, and/or alt
-			structInput.ki.wScan = 0;
-			structInput.ki.time = 0;
-			structInput.ki.dwFlags = 0;
+			structInput.u.ki.wScan = 0;
+			structInput.u.ki.time = 0;
+			structInput.u.ki.dwFlags = 0;
 			if (alt)
 			{
-				structInput.ki.wVk = (ushort) VKeys.KEY_MENU;
-				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
+				structInput.u.ki.wVk = (ushort) VKeys.KEY_MENU;
+				intReturn = SendInput(1, new []{structInput}, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(delay);
 			}
 			if (ctrl)
 			{
-				structInput.ki.wVk = (ushort) VKeys.KEY_CONTROL;
-				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
+				structInput.u.ki.wVk = (ushort) VKeys.KEY_CONTROL;
+				intReturn = SendInput(1, new []{structInput}, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(delay);
 			}
 			if (shift)
 			{
-				structInput.ki.wVk = (ushort) VKeys.KEY_SHIFT;
-				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
+				structInput.u.ki.wVk = (ushort) VKeys.KEY_SHIFT;
+				intReturn = SendInput(1, new []{structInput}, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(delay);
 
 				if (key.ShiftKey != VKeys.NULL)
 				{
-					structInput.ki.wVk = (ushort) key.ShiftKey;
-					intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
+					structInput.u.ki.wVk = (ushort) key.ShiftKey;
+					intReturn = SendInput(1, new []{structInput}, Marshal.SizeOf(new INPUT()));
 					Thread.Sleep(delay);
 				}
 			}
@@ -713,23 +752,23 @@ namespace Keyboard
 			// Key up the actual key-code			
 			ForegroundKeyPress(hWnd, key);
 
-			structInput.ki.dwFlags = KEYEVENTF_KEYUP;
+			structInput.u.ki.dwFlags = KEYEVENTF_KEYUP;
 			if (shift && key.ShiftKey == VKeys.NULL)
 			{
-				structInput.ki.wVk = (ushort) VKeys.KEY_SHIFT;
-				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
+				structInput.u.ki.wVk = (ushort) VKeys.KEY_SHIFT;
+				intReturn = SendInput(1, new []{structInput}, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(delay);
 			}
 			if (ctrl)
 			{
-				structInput.ki.wVk = (ushort) VKeys.KEY_CONTROL;
-				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
+				structInput.u.ki.wVk = (ushort) VKeys.KEY_CONTROL;
+				intReturn = SendInput(1, new []{structInput}, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(delay);
 			}
 			if (alt)
 			{
-				structInput.ki.wVk = (ushort) VKeys.KEY_MENU;
-				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
+				structInput.u.ki.wVk = (ushort) VKeys.KEY_MENU;
+				intReturn = SendInput(1, new []{structInput}, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(delay);
 			}
 			return true;
@@ -761,25 +800,25 @@ namespace Keyboard
 			structInput.type = INPUT_KEYBOARD;
 
 			// Key down shift, ctrl, and/or alt
-			structInput.ki.wScan = 0;
-			structInput.ki.time = 0;
-			structInput.ki.dwFlags = 0;
+			structInput.u.ki.wScan = 0;
+			structInput.u.ki.time = 0;
+			structInput.u.ki.dwFlags = 0;
 			if (alt)
 			{
-				structInput.ki.wVk = (ushort) VKeys.KEY_MENU;
-				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
+				structInput.u.ki.wVk = (ushort) VKeys.KEY_MENU;
+				intReturn = SendInput(1, new []{structInput}, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(delay);
 			}
 			if (ctrl)
 			{
-				structInput.ki.wVk = (ushort) VKeys.KEY_CONTROL;
-				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
+				structInput.u.ki.wVk = (ushort) VKeys.KEY_CONTROL;
+				intReturn = SendInput(1, new []{structInput}, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(delay);
 			}
 			if (shift)
 			{
-				structInput.ki.wVk = (ushort) VKeys.KEY_SHIFT;
-				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
+				structInput.u.ki.wVk = (ushort) VKeys.KEY_SHIFT;
+				intReturn = SendInput(1, new []{structInput}, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(delay);
 
 				if (key.ShiftKey != VKeys.NULL)
@@ -793,23 +832,23 @@ namespace Keyboard
 
 			PostMessage(hWnd, key);
 
-			structInput.ki.dwFlags = KEYEVENTF_KEYUP;
+			structInput.u.ki.dwFlags = KEYEVENTF_KEYUP;
 			if (shift && key.ShiftKey == VKeys.NULL)
 			{
-				structInput.ki.wVk = (ushort) VKeys.KEY_SHIFT;
-				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
+				structInput.u.ki.wVk = (ushort) VKeys.KEY_SHIFT;
+				intReturn = SendInput(1, new []{structInput}, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(delay);
 			}
 			if (ctrl)
 			{
-				structInput.ki.wVk = (ushort) VKeys.KEY_CONTROL;
-				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
+				structInput.u.ki.wVk = (ushort) VKeys.KEY_CONTROL;
+				intReturn = SendInput(1, new []{structInput}, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(delay);
 			}
 			if (alt)
 			{
-				structInput.ki.wVk = (ushort) VKeys.KEY_MENU;
-				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
+				structInput.u.ki.wVk = (ushort) VKeys.KEY_MENU;
+				intReturn = SendInput(1, new []{structInput}, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(delay);
 			}
 
@@ -885,25 +924,32 @@ namespace Keyboard
 		{
 			CheckKeyShiftState();
 			uint intReturn;
-			INPUT structInput = new INPUT {type = INPUT_KEYBOARD, ki = {wScan = 0, time = 0, dwFlags = 0}};
+		    INPUT structInput = new INPUT
+		    {
+		        type = INPUT_KEYBOARD,
+		        u = new InputUnion
+		        {
+		            ki = {wScan = 0, time = 0, dwFlags = 0}
+		        }
+		    };
 
 			// Key down shift, ctrl, and/or alt
 			if (alt)
 			{
-				structInput.ki.wVk = (ushort) VKeys.KEY_MENU;
-				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
+				structInput.u.ki.wVk = (ushort) VKeys.KEY_MENU;
+				intReturn = SendInput(1, new []{structInput}, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(delay);
 			}
 			if (ctrl)
 			{
-				structInput.ki.wVk = (ushort) VKeys.KEY_CONTROL;
-				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
+				structInput.u.ki.wVk = (ushort) VKeys.KEY_CONTROL;
+				intReturn = SendInput(1, new []{structInput}, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(delay);
 			}
 			if (shift)
 			{
-				structInput.ki.wVk = (ushort) VKeys.KEY_SHIFT;
-				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
+				structInput.u.ki.wVk = (ushort) VKeys.KEY_SHIFT;
+				intReturn = SendInput(1, new []{structInput}, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(delay);
 
 				if (key.ShiftKey != VKeys.NULL)
@@ -917,23 +963,23 @@ namespace Keyboard
 
 			SendMessage(hWnd, key, false);
 
-			structInput.ki.dwFlags = KEYEVENTF_KEYUP;
+			structInput.u.ki.dwFlags = KEYEVENTF_KEYUP;
 			if (shift && key.ShiftKey == VKeys.NULL)
 			{
-				structInput.ki.wVk = (ushort) VKeys.KEY_SHIFT;
-				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
+				structInput.u.ki.wVk = (ushort) VKeys.KEY_SHIFT;
+				intReturn = SendInput(1, new []{structInput}, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(delay);
 			}
 			if (ctrl)
 			{
-				structInput.ki.wVk = (ushort) VKeys.KEY_CONTROL;
-				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
+				structInput.u.ki.wVk = (ushort) VKeys.KEY_CONTROL;
+				intReturn = SendInput(1, new []{structInput}, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(delay);
 			}
 			if (alt)
 			{
-				structInput.ki.wVk = (ushort) VKeys.KEY_MENU;
-				intReturn = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
+				structInput.u.ki.wVk = (ushort) VKeys.KEY_MENU;
+				intReturn = SendInput(1, new []{structInput}, Marshal.SizeOf(new INPUT()));
 				Thread.Sleep(delay);
 			}
 

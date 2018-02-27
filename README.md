@@ -1,3 +1,7 @@
+DEPRECATED
+========
+This github repo is no longer maintained although it likely will work it isn't really monitored or updated.  Please use this for education purposes, in no way is the Maintainer responsible for the actions of the users.
+
 Keyboard
 ========
 

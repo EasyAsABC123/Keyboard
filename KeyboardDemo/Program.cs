@@ -18,7 +18,9 @@ namespace KeyboardDemo
 
 			try
 			{
-				List<Key> keys = "hello world".Select(c => new Key(c)).ToList();
+				List<Key> keys = "Hello world".Select(c => new Key(c)).ToList();
+				//exclamation mark - shift+1
+				keys.Add(new Key(Messaging.VKeys.KEY_1, Messaging.VKeys.KEY_SHIFT, Messaging.ShiftType.SHIFT));
 				var procId = p.Id;
 				Console.WriteLine("ID: " + procId);
 				Console.WriteLine("Sending background keypresses to write \"hello world\"");
@@ -26,7 +28,7 @@ namespace KeyboardDemo
 				foreach (var key in keys)
 				{
 					key.PressForeground(p.MainWindowHandle);
-				}
+                }
 
 			}
 			catch (InvalidOperationException)

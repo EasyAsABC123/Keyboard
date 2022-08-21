@@ -753,7 +753,7 @@ namespace Keyboard
 			ForegroundKeyPress(hWnd, key);
 
 			structInput.u.ki.dwFlags = KEYEVENTF_KEYUP;
-			if (shift && key.ShiftKey == VKeys.NULL)
+			if (shift)
 			{
 				structInput.u.ki.wVk = (ushort) VKeys.KEY_SHIFT;
 				intReturn = SendInput(1, new []{structInput}, Marshal.SizeOf(new INPUT()));
@@ -833,7 +833,7 @@ namespace Keyboard
 			PostMessage(hWnd, key);
 
 			structInput.u.ki.dwFlags = KEYEVENTF_KEYUP;
-			if (shift && key.ShiftKey == VKeys.NULL)
+			if (shift)
 			{
 				structInput.u.ki.wVk = (ushort) VKeys.KEY_SHIFT;
 				intReturn = SendInput(1, new []{structInput}, Marshal.SizeOf(new INPUT()));
@@ -964,7 +964,7 @@ namespace Keyboard
 			SendMessage(hWnd, key, false);
 
 			structInput.u.ki.dwFlags = KEYEVENTF_KEYUP;
-			if (shift && key.ShiftKey == VKeys.NULL)
+			if (shift)
 			{
 				structInput.u.ki.wVk = (ushort) VKeys.KEY_SHIFT;
 				intReturn = SendInput(1, new []{structInput}, Marshal.SizeOf(new INPUT()));
